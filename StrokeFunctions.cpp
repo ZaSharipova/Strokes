@@ -5,14 +5,11 @@
 #include <assert.h>
 
 
-#define P 1021
-#define R 101
+#define d 256
+#define q 10000000007
 
 int Mputs(const char *str) {
     assert(str != NULL);
-    if (str == NULL) {
-        return EOF;
-    }
 
     while (*str) {
         if (putchar(*str++) == EOF) {
@@ -29,9 +26,6 @@ int Mputs(const char *str) {
 
 const char *Mstrchr(const char *str, int c) {
     assert(str != NULL);
-    if (str == NULL){
-        return NULL;
-    }
 
     while (*str) {
         if (*str == (char)c) {
@@ -47,26 +41,23 @@ const char *Mstrchr(const char *str, int c) {
     return NULL;
 }
 
-size_t Mstrlen(const char *str){
+size_t Mstrlen(const char *str) {
     assert(str != NULL);
-    if (str == NULL){
-        return NULL;
-    }
 
     size_t i = 0;
-    while (str[i] != '\0'){
+    while (str[i] != '\0') {
         i++;
     }
     return i;
 }
 
-char *Mstrcpy(char *str1, const char *str2){
+char *Mstrcpy(char *str1, const char *str2) {
     assert(str1 != NULL);
     assert(str2 != NULL);
 
     char *cur = str1;
 
-    while ((*str2) != '\0'){
+    while ((*str2) != '\0') {
         *cur = *str2;
         str2++;
         cur++;
@@ -92,15 +83,15 @@ char *Mstrncpy(char *str1, const char *str2, size_t num) {
     return str1;
 }
 
-char *Mstrcat(char *str1, const char *str2){
+char *Mstrcat(char *str1, const char *str2) {
     assert(str1 != NULL);
     assert(str2 != NULL);
 
     char *start = str1;
-    while ((*str1) != '\0'){
+    while ((*str1) != '\0') {
         str1++;
     }
-    while ((*str2) != '\0'){
+    while ((*str2) != '\0') {
         *str1 = *str2;
         str1++;
         str2++;
@@ -113,9 +104,6 @@ char *Mstrcat(char *str1, const char *str2){
 char *Mstrncat(char *dest, const char *src, size_t num) {
     assert(dest != NULL);
     assert(src  != NULL);
-    if (dest == NULL || src == NULL){
-        return NULL;
-    }
 
     char *start = dest;
 
@@ -123,10 +111,12 @@ char *Mstrncat(char *dest, const char *src, size_t num) {
         dest++;
     }
 
-    while (num-- && *src) {
-        *dest++ = *src++;
+    while (num > 0 && (*src) != '\0') {
+        num--;
+        *dest = *src;
+        dest++;
+        src++;
     }
-
     *dest = '\0';
 
     return start;
@@ -136,7 +126,7 @@ char *Mstrncat(char *dest, const char *src, size_t num) {
 char *Mfgets(char *str, int num, FILE *file) {
     assert(str  != NULL);
     assert(file != NULL);
-    if (str == NULL || file == NULL){
+    if (file == NULL) {
         return NULL;
     }
 
@@ -145,7 +135,8 @@ char *Mfgets(char *str, int num, FILE *file) {
     int i = 0;
 
     while (i < num - 1 && (c = getc(file)) != EOF) {
-        *str++ = (char)c;
+        *str = (char)c;
+        str++;
         i++;
         if (c == '\n') {
             break; 
@@ -155,23 +146,19 @@ char *Mfgets(char *str, int num, FILE *file) {
     if (i == 0 && c == EOF) {
         return NULL;
     }
-
     *str = '\0'; 
+
     return start;
 }
 
 
-char *Mstrdup(char *str){
+char *Mstrdup(char *str) {
     assert(str != NULL);
-    if (str == NULL){
-        return NULL;
-    }
 
     char *buff = (char *) malloc ((Mstrlen(str) + 1) * sizeof(char));
-    if (buff == NULL){
+    if (buff == NULL) {
         return NULL;
     }
-
     Mstrcpy(buff, str);
 
     return buff;
@@ -180,7 +167,7 @@ char *Mstrdup(char *str){
 int Mgetline(FILE *file, char *str, int num) {
     assert(str  != NULL);
     assert(file != NULL);
-    if (str == NULL || file == NULL){
+    if (file == NULL) {
         return NULL;
     }
 
@@ -194,7 +181,6 @@ int Mgetline(FILE *file, char *str, int num) {
     if (c == '\n' && i < num - 1) {
         str[i++] = (char)c;
     }
-
     str[i] = '\0';
 
     if (i == 0 && c == EOF) {
@@ -204,7 +190,7 @@ int Mgetline(FILE *file, char *str, int num) {
     return i;
 }
 
-// ssize_t my_getline(char **lineptr, size_t *n, FILE *stream) {
+// size_t my_getline(char **lineptr, size_t *n, FILE *stream) {
 //     if (lineptr == NULL || n == NULL || stream == NULL) {
 //         return -1;
 //     }
@@ -244,8 +230,39 @@ int Mgetline(FILE *file, char *str, int num) {
 //     }
 
 //     (*lineptr)[pos] = '\0';
-//     return (ssize_t)pos;
+//     return (size_t)pos;
 // }
+
+long Matoi(const char *str) {
+    assert(str != NULL);
+    if (str == NULL) {
+        return NULL;
+    }
+
+    int minus = 1;
+    long num = 0;
+    int i = (int)Mstrlen(str) - 1;
+    long long powi = 1;
+
+    while (i >= 0) {
+        if (str[i] == '-') {
+            minus = -1;
+
+        } else {
+            if (str[i] == ' ') {
+                break;
+
+            } else {
+                num += ((str[i] - '0') * powi);
+                powi *= 10;
+            }
+        }
+        i--;
+    }
+
+    return minus * num;
+
+}
 
 const char *Mstrstr(const char *str1, const char *str2) {
     assert(str1 != NULL);
@@ -269,6 +286,8 @@ const char *Mstrstr(const char *str1, const char *str2) {
 }
 
 char *Mstrtok(char *str, const char *delim) {
+    assert(delim != NULL);
+
     static char *next = NULL;
 
     if (str != NULL) {
@@ -297,9 +316,131 @@ char *Mstrtok(char *str, const char *delim) {
     if (*end != '\0') {
         *end = '\0';
         next = end + 1;
+
     } else {
         next = NULL;
     }
 
     return start;
+}
+
+const char *Mstrstr5(const char *str, const char *compare) {
+    assert(str     != NULL);
+    assert(compare != NULL);
+
+    size_t n = Mstrlen(str);
+    size_t m = Mstrlen(compare);
+
+    if (m == 0) {
+        return str;
+    }
+
+    size_t freq[256] = {m};
+    for (int i = 1; i < 256; i++) {
+       freq[i] = m;
+    }
+
+    for (size_t i = 0; i < m - 1; i++) {
+        freq[(unsigned char)compare[i]] = m - i - 1;
+    }
+
+    size_t pos = m - 1;
+    while (pos < n) {
+
+        if (str[pos] == compare[m - 1]) {
+            size_t cnt = 1;
+
+            while (cnt < m && str[pos - cnt] == compare[m - 1 - cnt]) {
+                cnt++;
+            }
+            if (cnt == m) {
+                return str + pos - m + 1;
+            }
+
+            pos += freq[(unsigned char)str[pos - cnt]];
+
+        } else {
+
+            pos += freq[(unsigned char)str[pos]];
+        }
+    }
+    return NULL;
+}
+
+size_t rabin_karp(const char *text, const char *pattern) {
+    assert(text    != NULL);
+    assert(pattern != NULL);
+
+    size_t M = Mstrlen(pattern);
+    size_t N = Mstrlen(text);
+    size_t i = 0;
+    int p = 0, t = 0, h = 1;
+
+    for (i = 0; i < M - 1; i++) {
+        h = (h * d) % q;
+    }
+
+    for (i = 0; i < M; i++) {
+        p = (d * p + pattern[i]) % q;
+        t = (d * t + text[i]) % q;
+    }
+
+    for (i = 0; i <= N - M; i++) {
+        if (Mstrncmp(text + i, pattern, M) == 0){
+            return i;
+        }
+
+        t = (d * (t - text[i] * h) + text[i + M]) % q;
+        if (t < 0) {
+            t += q;
+        }
+    }
+
+    return NULL;
+}
+
+int Mstrcmp(const char *str1, const char *str2) {
+    assert(str1 != NULL);
+    assert(str2 != NULL);
+
+    size_t n = Mstrlen(str1);
+    size_t m = Mstrlen(str2);
+
+    if (n < m) {
+        return -1;
+    }
+    
+    if (m > n) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        if (str1[i] != str2[i]) {
+            return ((str1[i] > str2[i]) ? (1) : (-1));
+        }
+    }
+
+    return 0;
+}
+
+int Mstrncmp(const char *str1, const char *str2, size_t num) {
+    assert(str1 != NULL);
+    assert(str2 != NULL);
+
+    size_t n = Mstrlen(str1);
+    size_t m = Mstrlen(str2);
+
+    if (n < num || m < num) {
+        if (n > m) {
+            return 1;
+        }
+    }
+
+    for (size_t i = 0; (i < num && i < n); i++) {
+        if (str1[i] != str2[i]) {
+            return ((str1[i] > str2[i]) ? (1) : (-1));
+        }
+    }
+
+    return 0;
 }

@@ -13,7 +13,12 @@ char *Mstrncat(char *dest, const char *src, size_t num);
 char *Mfgets(char *str, int num, FILE *file);
 char *Mstrdup(char *str);
 int Mgetline(FILE *file, char *str, int num);
+long Matoi(const char *str);
 const char *Mstrstr(const char *str1, const char *str2);
 char *Mstrtok(char *str, const char *delim);
+const char *Mstrstr5(const char *str, const char *compare);
+size_t rabin_karp(const char *text, const char *pattern);
+int Mstrcmp(const char *str1, const char *str2);
+int Mstrncmp(const char *str1, const char *str2, size_t num);
 
 #endif // STROKE_START_H_

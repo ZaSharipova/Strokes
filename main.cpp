@@ -83,7 +83,7 @@ TEST(strcat) {
     EXPECT_EQ_CHAR(strcat(dest2, ""), Mstrcat(dest4, ""));
 }
 
-TEST(strncat){
+TEST(strncat) {
     char dest1[20] = "1234";
     EXPECT_EQ_CHAR("123412", Mstrncat(dest1, "12345", 2));
 
@@ -98,7 +98,7 @@ TEST(strncat){
 //     EXPECT_EQ("", Mstrdup("12"));
 // }
 
-TEST(strstr){
+TEST(strstr) {
     char dest1[20] = "123";
     EXPECT_EQ_CHAR("123", Mstrstr(dest1, "123"));
     char dest2[20] = "1234";
@@ -107,13 +107,61 @@ TEST(strstr){
     EXPECT_EQ_CHAR(NULL, Mstrstr(dest3, "123")); 
 }
 
-TEST(strtok){
+TEST(strtok) {
     char dest1[20] = "123 23";
     EXPECT_EQ_CHAR("123", Mstrtok(dest1, " "));
     char dest2[20] = "1234";
     EXPECT_EQ_CHAR("1234", Mstrtok(dest2, ""));
     char dest3[20] = "";
     EXPECT_EQ_CHAR(NULL, Mstrtok(dest3, "123"));
+}
+
+TEST(atoi) {
+    char dest1[20] = "-12343";
+    char dest2[20] = "12343";
+    EXPECT_EQ_SIZE_T(-12343, Matoi(dest1));
+    EXPECT_EQ_SIZE_T(12343, Matoi(dest2));
+}
+
+TEST(getline) {
+    FILE *file = fopen("input.txt", "r");
+    char str[20];
+    Mgetline(file,  str, 10);
+    EXPECT_EQ_CHAR("12345", str);
+}
+
+TEST(strstr5) {
+    char dest1[20] = "123";
+    EXPECT_EQ_CHAR("123", Mstrstr(dest1, "123"));
+    char dest2[20] = "1234";
+    EXPECT_EQ_CHAR("234", Mstrstr(dest2, "23"));  
+    char dest3[20] = "12";
+    EXPECT_EQ_CHAR(NULL, Mstrstr(dest3, "123")); 
+}
+
+TEST(rabin_karp){
+    char dest1[20] = "123";
+    EXPECT_EQ_SIZE_T(0, rabin_karp(dest1, "123"));
+    char dest2[20] = "1234";
+    EXPECT_EQ_SIZE_T(1, rabin_karp(dest2, "23"));  
+    char dest3[20] = "12";
+    EXPECT_EQ_SIZE_T(NULL, rabin_karp(dest3, "123")); 
+}
+
+TEST(strcmp) {
+    EXPECT_EQ_SIZE_T(-1, Mstrcmp("abc", "abd"));
+    EXPECT_EQ_SIZE_T(-1, Mstrcmp("abc", "abcee"));
+    EXPECT_EQ_SIZE_T(0, Mstrcmp("abcdef", "abcdef"));
+    EXPECT_EQ_SIZE_T(1, Mstrcmp("abc", "abb"));
+    EXPECT_EQ_SIZE_T(1, Mstrcmp("abc", "ab"));
+}
+
+TEST(strncmp) {
+    EXPECT_EQ_SIZE_T(-1, Mstrncmp("abc", "abd", 3));
+    EXPECT_EQ_SIZE_T(0, Mstrncmp("abc", "abc", 7));
+    EXPECT_EQ_SIZE_T(0, Mstrncmp("abcdef", "abcdef", 6));
+    EXPECT_EQ_SIZE_T(1, Mstrncmp("abc", "abb", 3));
+    EXPECT_EQ_SIZE_T(1, Mstrncmp("abc", "ab", 8));
 }
 
 void reg(void) {
@@ -126,9 +174,15 @@ void reg(void) {
     //REGISTER_TEST(strdup);
     REGISTER_TEST(strstr);
     REGISTER_TEST(strtok);    
+    REGISTER_TEST(atoi);
+    REGISTER_TEST(getline);
+    REGISTER_TEST(strstr5);
+    REGISTER_TEST(rabin_karp);
+    REGISTER_TEST(strcmp);
+    REGISTER_TEST(strncmp);
 }
 
-int main(void){
+int main(void) {
     reg();
     run_all_tests();
     return 0;
