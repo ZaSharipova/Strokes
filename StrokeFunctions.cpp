@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-
 #define d 256
 #define q 10000000007
 
@@ -48,6 +47,7 @@ size_t Mstrlen(const char *str) {
     while (str[i] != '\0') {
         i++;
     }
+
     return i;
 }
 
@@ -63,6 +63,7 @@ char *Mstrcpy(char *str1, const char *str2) {
         cur++;
     }
     *cur = '\0';
+
     return str1;
 }
 
@@ -80,6 +81,7 @@ char *Mstrncpy(char *str1, const char *str2, size_t num) {
         str1[i] = '\0';
         i++;
     }
+
     return str1;
 }
 
@@ -91,6 +93,7 @@ char *Mstrcat(char *str1, const char *str2) {
     while ((*str1) != '\0') {
         str1++;
     }
+
     while ((*str2) != '\0') {
         *str1 = *str2;
         str1++;
@@ -113,6 +116,7 @@ char *Mstrncat(char *dest, const char *src, size_t num) {
 
     while (num > 0 && (*src) != '\0') {
         num--;
+
         *dest = *src;
         dest++;
         src++;
@@ -138,6 +142,7 @@ char *Mfgets(char *str, int num, FILE *file) {
         *str = (char)c;
         str++;
         i++;
+
         if (c == '\n') {
             break; 
         }
@@ -164,37 +169,49 @@ char *Mstrdup(char *str) {
     return buff;
 }
 
-int Mgetline(FILE *file, char *str, int num) {
-    assert(str  != NULL);
-    assert(file != NULL);
+ssize_t Mgetline(char **lineptr, size_t *num, FILE *file) {
+    assert(lineptr != NULL);
+    assert(num     != NULL);
+    assert(file    != NULL);
     if (file == NULL) {
         return NULL;
     }
 
-    int c = 0;
-    int i = 0;
-
-    while (i < num - 1 && (c = fgetc(file)) != EOF && c != '\n') {
-        str[i++] = (char)c;
+    if (*num == 0){
+        *num = 128;
     }
 
-    if (c == '\n' && i < num - 1) {
-        str[i++] = (char)c;
-    }
-    str[i] = '\0';
-
-    if (i == 0 && c == EOF) {
+    *lineptr = (char *) calloc((*num + 1), sizeof(char));
+    if (*lineptr == NULL) {
         return -1;
     }
 
-    return i;
+    ssize_t pos = 0;
+    int c = 0;
+
+    while ((c = fgetc(file)) != EOF) {
+        if (pos + 1 >= (ssize_t)*num) {
+            size_t new_size = *num * 2;
+            
+            char *new_ptr = (char *) realloc(*lineptr, new_size);
+            if (new_ptr == NULL) {
+                return -1;
+            }
+
+            *lineptr = new_ptr;
+            *num = new_size;
+        }
+
+        (*lineptr)[pos++] = (char)c;
+    }
+
+    (*lineptr)[pos] = '\0'; //'\n' ??
+
+    return pos;
 }
 
 long Matoi(const char *str) {
     assert(str != NULL);
-    if (str == NULL) {
-        return NULL;
-    }
 
     int minus = 1;
     long num = 0;
@@ -234,6 +251,7 @@ const char *Mstrstr(const char *str1, const char *str2) {
         while (str2[j] != '\0' && str1[i + j] == str2[j]) {
             j++;
         }
+
         if (str2[j] == '\0') {
             return (str1 + i);  //char needed
         }
@@ -310,6 +328,7 @@ const char *Mstrstr5(const char *str, const char *compare) {
             while (cnt < m && str[pos - cnt] == compare[m - 1 - cnt]) {
                 cnt++;
             }
+
             if (cnt == m) {
                 return str + pos - m + 1;
             }
@@ -321,6 +340,7 @@ const char *Mstrstr5(const char *str, const char *compare) {
             pos += freq[(unsigned char)str[pos]];
         }
     }
+
     return NULL;
 }
 

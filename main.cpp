@@ -125,9 +125,14 @@ TEST(atoi) {
 
 TEST(getline) {
     FILE *file = fopen("input.txt", "r");
-    char str[20];
-    Mgetline(file,  str, 10);
-    EXPECT_EQ_CHAR("12345", str);
+    assert(file != NULL);
+
+    char *lineptr = NULL;
+    size_t num = 10;
+
+    Mgetline(&lineptr, &num, file);
+    EXPECT_EQ_CHAR("12345", lineptr);
+    fclose(file);
 }
 
 TEST(strstr5) {
