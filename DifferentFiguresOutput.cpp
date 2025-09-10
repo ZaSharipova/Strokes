@@ -142,7 +142,6 @@ int count_rombus(size_t size, int *counts) {
         int x2 = (ceil)(xc + sqr);
         int x1 = (floor)(xc - sqr);
         count = (x2 - x1 + 1);
-        printf("%d %d %d\n", x2, x1, count);
         counts[i] = count;
         counter += count;
     }
