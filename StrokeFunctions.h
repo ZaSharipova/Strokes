@@ -1,5 +1,5 @@
 #ifndef STROKE_START_H_
-#define stroke_start_h_
+#define STROKE_START_H_
 
 #include <stdio.h>
 

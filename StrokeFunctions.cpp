@@ -174,7 +174,7 @@ ssize_t Mgetline(char **lineptr, size_t *num, FILE *file) {
     assert(num     != NULL);
     assert(file    != NULL);
     if (file == NULL) {
-        return NULL;
+        return -1;
     }
 
     if (*num == 0){
@@ -192,7 +192,7 @@ ssize_t Mgetline(char **lineptr, size_t *num, FILE *file) {
     while ((c = fgetc(file)) != EOF) {
         if (pos + 1 >= (ssize_t)*num) {
             size_t new_size = *num * 2;
-            
+
             char *new_ptr = (char *) realloc(*lineptr, new_size);
             if (new_ptr == NULL) {
                 return -1;
@@ -202,10 +202,20 @@ ssize_t Mgetline(char **lineptr, size_t *num, FILE *file) {
             *num = new_size;
         }
 
-        (*lineptr)[pos++] = (char)c;
+        (*lineptr)[pos] = (char)c;
+        pos++;
+
+        if (c == '\n') {
+            break;
+        }
+
     }
 
-    (*lineptr)[pos] = '\0'; //'\n' ??
+    if (pos == 0 && c == EOF) {
+        return -1;
+    }
+
+    (*lineptr)[pos] = '\0';
 
     return pos;
 }

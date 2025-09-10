@@ -132,6 +132,7 @@ TEST(getline) {
 
     Mgetline(&lineptr, &num, file);
     EXPECT_EQ_CHAR("12345", lineptr);
+    
     fclose(file);
 }
 
