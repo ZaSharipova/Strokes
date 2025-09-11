@@ -3,57 +3,85 @@
 #include <assert.h>
 #include <math.h>
 
-int arifm_progr(int n);
-int min_line_size_rombus(int n, int k);
-int arifm_rombus(int n, int k, int *counts_rombus);
-int special_arifm_rombus(int k);
+int arifm_progr(size_t n);
+int min_line_size_rombus(size_t n, size_t m);
+int arifm_rombus(size_t n, size_t m, int *counts_rombus);
+int special_arifm_rombus(size_t m);
 int arifm_circle(size_t i_y, size_t i_x, int *counts);
 // int dist(double xc, double yc, double x1, double y1, double r);
 // int circle_positions_counter(size_t size, int *counts);
 int count_rombus(size_t size, int *counts);
 int *return_address_square(int *data, size_t sizeX, size_t i_y, size_t i_x);
+
 int find_max1(int *data, size_t size);
+void find_sum_in_rows(int *data, size_t sizeY, size_t sizeX);
+
 void output_data_square(int *data, size_t sizeY, size_t sizeX);
-void output_data_triangle(int *data, int n);
-void output_data_rombus(int *data, int n, int k, int *counts_rombus);
-void output_data_circle(int *ptr, int n, int *counts);
-int find_min_rombus(int n, int k);
-int find_address_rombus(int n, int k, size_t i_y, size_t i_x, int *count_rombus);
+void output_data_triangle(int *data, size_t n);
+void output_data_rombus(int *data, size_t n, size_t m, int *counts_rombus);
+void output_data_circle(int *ptr, size_t n, int *counts);
+int find_min_rombus(size_t n, size_t m);
+int find_address_rombus(size_t i_y, size_t i_x, int *count_rombus);
 
+void work_with_square(void);
+void work_with_triangle(void);
+void work_with_rombus(void);
+void work_with_circle(void);
 
-int arifm_progr(int n) {
+int main(void) {
+    work_with_square();
+    work_with_triangle();
+    work_with_rombus();
+    work_with_circle();
+
+    // int data_rombus2 [12] = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    // output_data_rombus(data_rombus2, 4, 4);
+    // printf("\n");
+
+    // int data_rombus3 [23] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+    // output_data_rombus(data_rombus3, 5, 7);
+    // printf("\n");
+
+}
+//-----------------------------------------------------------------
+
+int arifm_progr(size_t n) {
     return n * (n + 1) / 2;
 }
 
-int find_min_rombus(int n, int k) {
+int find_min_rombus(size_t n, size_t m) {
     int line_size = 0;
-    if (n <= k){
-        line_size = min_line_size_rombus(n, k);
+
+    if (n <= m){
+        line_size = min_line_size_rombus(n, m);
 
     } else {
-        line_size = special_arifm_rombus(k);
+        line_size = special_arifm_rombus(m);
     }
     return line_size;
 }
 
-int min_line_size_rombus(int n, int k) {
-    int line_size = k - ((n-1) / 2) * 2;
+int min_line_size_rombus(size_t n, size_t m) {
+    int line_size = m - ((n - 1) / 2) * 2;
 
     return line_size;
 }
 
-int special_arifm_rombus(int k) {
-    int line_size = 2 - k % 2;
+int special_arifm_rombus(size_t m) {
+    int line_size = 2 - m % 2;
+
     return line_size;
 }
 
-int arifm_rombus(int n, int k, int *counts_rombus) {
-    int line_size = find_min_rombus(n, k);
+int arifm_rombus(size_t n, size_t m, int *counts_rombus) {
+    assert(counts_rombus != NULL);
 
+    int line_size = find_min_rombus(n, m);
     int ans = 0;
     size_t i = 0;
+
     while (i < n) {
-        if (line_size == k && n > k) {
+        if (line_size == m && n > m) {
             size_t j = i + ((n + 1) / 2 - i) * 2;
             while (i < j) {
                 counts_rombus[i] = line_size;
@@ -73,14 +101,18 @@ int arifm_rombus(int n, int k, int *counts_rombus) {
 
         i++;
     }
+
     return ans;
 }
 
-int find_address_rombus(int n, int k, size_t i_y, size_t i_x, int *count_rombus) {
+int find_address_rombus(size_t i_y, size_t i_x, int *count_rombus) {
+    assert(count_rombus != NULL);
+
     int ans = 0;
     for (size_t y = 0; y < i_y; y++) {
         ans += count_rombus[y];
     }
+
     return ans + i_x;
 }
 
@@ -131,17 +163,19 @@ int count_rombus(size_t size, int *counts) {
     int count = 0, counter = 0;
     double yc = size / 2.0;
     double xc = yc;
-    if (size % 2 != 0) {
+    if (size % 2 == 0) {
         yc -= 0.5; 
         xc -= 0.5;
     }
 
     for (size_t i = 0; i < size; i++) {
-
         double sqr = sqrt(size/2 * size/2 - (i - yc) * (i - yc));
-        int x2 = (ceil)(xc + sqr);
-        int x1 = (floor)(xc - sqr);
-        count = (x2 - x1 + 1);
+        int x1 = (int)ceil(xc - sqr);
+        int x2 = (int)floor(xc + sqr);
+        count = (x2 >= x1) ? (x2 - x1 + 1) : 0;
+
+
+        //count = (x2 - x1 + 1);
         counts[i] = count;
         counter += count;
     }
@@ -153,7 +187,7 @@ int count_rombus(size_t size, int *counts) {
 int *return_address_square(int *data, size_t sizeX, size_t i_y, size_t i_x) {
     assert(data != NULL);
 
-    return (data + i_y * sizeX + i_x);
+    return (int *)((size_t)data + (i_y * sizeX + i_x) * sizeof(int));
 }
 
 int *return_address_triangle(int *data, int i_y, int i_x) {
@@ -162,10 +196,10 @@ int *return_address_triangle(int *data, int i_y, int i_x) {
     return (data + arifm_progr(i_y) + i_x);
 }
 
-int *return_address_rombus(int *data, int i_y, int i_x, int n, int k, int *counts_rombus) {
+int *return_address_rombus(int *data, int i_y, int i_x, int n, int m, int *counts_rombus) {
     assert(data != NULL);
 
-    return (data + find_address_rombus(n, k, i_y, i_x, counts_rombus));
+    return (data + find_address_rombus(i_y, i_x, counts_rombus));
 }
 
 int *return_address_circle(int *ptr, int i_y, int i_x, int counts[]) {
@@ -195,6 +229,20 @@ int find_max1(int *data, size_t size) {
 //     return maxi;
 // }
 
+void find_sum_in_rows(int *data, size_t sizeY, size_t sizeX) {
+    assert(data != NULL);
+
+    int sum = 0;
+    for (size_t y = 0; y < sizeY; y++) {
+        for (size_t x = 0; x < sizeX; x++) {
+            sum += *return_address_square(data, sizeX, y, x);
+        }
+        printf("%d ", sum);
+        sum = 0;
+    }
+    printf("\n");
+}
+
 //-------------------------------------------------------------------
 void output_data_square(int *data, size_t sizeY, size_t sizeX) {
     assert(data != NULL);
@@ -207,7 +255,7 @@ void output_data_square(int *data, size_t sizeY, size_t sizeX) {
     }
 }
 
-void output_data_triangle(int *data, int n) {
+void output_data_triangle(int *data, size_t n) {
     assert(data != NULL);
 
     int counter = n;
@@ -221,55 +269,60 @@ void output_data_triangle(int *data, int n) {
     }
 }
 
-void output_data_rombus(int *data, int n, int k, int *counts_rombus) {
+void output_data_rombus(int *data, size_t n, size_t m, int *counts_rombus) {
     assert(data != NULL);
     assert(counts_rombus != NULL);
 
     for (size_t y = 0; y < n; y++) {
         for (size_t x = 0; x < counts_rombus[y]; x++) {
-            printf("[%lu][%lu] = %d, ", y, x, *return_address_rombus(data, y, x, n, find_min_rombus(n, k) - 1, counts_rombus));
+            printf("[%lu][%lu] = %d, ", y, x, *return_address_rombus(data, y, x, n, find_min_rombus(n, m) - 1, counts_rombus));
         }
         printf("\n");
     }
 }
 
-void output_data_circle(int *ptr, int n, int *counts) {
+void output_data_circle(int *ptr, size_t n, int *counts) {
     assert(ptr != NULL);
     assert(counts != NULL);
 
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < counts[i]; j++) {
-            printf("[%lu][%lu] = %d, ", i, j, *return_address_circle(ptr, i, j, counts));
+    for (size_t y = 0; y < n; y++) {
+        for (size_t x = 0; x < counts[y]; x++) {
+            printf("[%lu][%lu] = %d, ", y, x, *return_address_circle(ptr, y, x, counts));
         }
         printf("\n");
     }
 }
 
 //-------------------------------------------------------------------
-int main(void) {
+void work_with_square(void) {
     int number = 0;
-    int n = 0, m = 0;
-    int k = 0;
+    size_t n = 0, m = 0;
 
     printf("Введите размеры прямоугольного массива (2 параметра): \n");
-    scanf("%d %d", &n, &m);
+    scanf("%lu %lu", &n, &m);
 
     int *data_square = (int *) calloc (n * m + 1, sizeof(int));
 
-    printf("Введите %d чисел: \n", n * m);
+    printf("Введите %lu чисел: \n", n * m);
     for (int i = 0; i < n * m; i++) {
         scanf("%d", &number);
         data_square[i] = number;
     }    
 
     output_data_square(data_square, n, m);
-    printf("%d\n\n", find_max1(data_square, n * m));
+    printf("%d\n", find_max1(data_square, n * m));
+    find_sum_in_rows(data_square, n, m);
+    printf("\n\n");
+
     free(data_square);
+}
 
+void work_with_triangle(void) {
+    size_t n = 0;
+    int number = 0;
 
-    //--------------
-    printf("Введите длину лесенки (1 параметр):\n"); //1
-    scanf("%d", &n);
+    printf("Введите длину лесенки (1 параметр): \n"); //1
+    scanf("%lu", &n);
 
     int size_d = n * (n + 1) / 2;
     int * data_triangle = (int *)calloc(size_d + 1, sizeof(int));
@@ -282,11 +335,16 @@ int main(void) {
 
     output_data_triangle(data_triangle, n);
     printf("%d\n", find_max1(data_triangle, size_d));
-    free(data_triangle);
+    printf("\n\n");
 
-    //--------------
+    free(data_triangle);
+}
+
+void work_with_rombus(void) {
+    size_t n = 0, m = 0;
+    int number = 0;
     printf("Введите количество строк и столбцов ромбового массива: \n");
-    scanf("%d %d", &n, &m);
+    scanf("%lu %lu", &n, &m);
 
     int counts_rombus[n];
     int size_r = arifm_rombus(n, m, counts_rombus);
@@ -299,25 +357,22 @@ int main(void) {
     }
 
     output_data_rombus(data_rombus1, n, m, counts_rombus);
-    printf("\n");
+    printf("\n\n");
+
     free(data_rombus1);
+}
 
-    // int data_rombus2 [12] = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-    // output_data_rombus(data_rombus2, 4, 4);
-    // printf("\n");
+void work_with_circle(void) {
+    size_t k = 0;
+    int number = 0;
 
-    // int data_rombus3 [23] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
-    // output_data_rombus(data_rombus3, 5, 7);
-    // printf("\n");
-
-    //--------------------------
-    printf("Введите размер круговой матрицы:\n");
-    scanf("%d", &k);
+    printf("Введите размер круговой матрицы: \n");
+    scanf("%ld", &k);
     int counts[k];
     int l = count_rombus(k, counts);
     int *data_circle = (int *)calloc(l + 1, sizeof(int));
 
-    printf("Введите чисел %d:\n", l);
+    printf("Введите чисел %d: \n", l);
 
     for (size_t j = 0; j < l; j++) {
         scanf("%d", &number);
@@ -325,10 +380,12 @@ int main(void) {
     }
 
     output_data_circle(data_circle, k, counts);
-    free(data_circle);
-    printf("\n");
+    printf("\n\n");
 
+    free(data_circle);
 }
+
+//-------------------------------------------------------------------
 
 // int *ptr = &mas[0][0];
 // int size = 2 * 3;
